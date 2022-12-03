@@ -13,19 +13,15 @@ links_bgrillo_list <- str_extract_all(
   links, 
   pattern = "^https://beppegrillo\\.it/.+-.+-.+")
 
+#unlist the list of links and put them in a data table
 links_unl <- unlist(links_bgrillo_list)
 links_bgrillo <- as.data.frame(links_unl)
 
 
-links_unl == links_bgrillo
+links_bgrillo
 
-links_bgrillo_list
-
-#tryng to extract only the articles liks
-str_view_all(links_unl, pattern = "^https://beppegrillo\\.it/[^category].+")
-
-link_grillo str_extract_all(
-  links_unl, pattern = "^https://beppegrillo\\.it/[^category].+")
+#tryng to extract only the articles liks. as you can se we see also the category "io grido cose preziose"
+# and the section "cerca nel blog" can you remove them?
 
 
 
