@@ -1,0 +1,22 @@
+---
+title: "CE2_Martinoli_Travaglini"
+author: "Francesca Martinoli, Simone Travaglini"
+date: "2022-12-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Task 1
+## Task 2
+## Task 3
+## Task 4
+## Task 5
+
+
+
+
+
+
