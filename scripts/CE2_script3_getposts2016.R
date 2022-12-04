@@ -110,3 +110,6 @@ for(i in 1:47) {
   link_post <- append(x = link_post, values = posts)
   Sys.sleep(1)
 }
+
+##tentativo 4----
+
