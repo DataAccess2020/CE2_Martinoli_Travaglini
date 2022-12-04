@@ -84,32 +84,13 @@ all_posts[[1]]    # posts from page 1
 #
 
 #tentativo 2 -----
-#non funziona
+to_scrape <- list.files(here::here("grillo_linkpages"), full.names = TRUE)   # get the list of pages 
+all_posts <- vector(mode = "list", length = length(to_scrape))    # empty container where to place the posts
 
+##extract all the links----
 
-link_post = vector()
-
-for(i in 1:47) {
-  link_pages <- httr::GET(url = "https://beppegrillo.it/category/archivio/2016/page/",
-                          add_headers(
-                            From = "francescamartinoli@yahoo.com",
-                            `User-Agent`= R.Version()$version.string
-                          ))
-  posts <- content(link_pages) %>% 
-    html_elements(css = ".td_module_10 .td-module-title") %>% 
-    html_attr(name = "href")
-  link_post <- append(x = link_post, values = posts)
-  Sys.sleep(1)
+for (i in seq_along(all_posts)){
+  all_posts[[i]] <- XML::getHTMLLinks(to_scrape[i], externalOnly = T)
 }
-
-#tentativo 3------
-for(i in 1:47) {
-  posts <- link %>% 
-    html_elements(css = ".td_module_10 .td-module-title") %>% 
-    html_attr(name = "href")
-  link_post <- append(x = link_post, values = posts)
-  Sys.sleep(1)
-}
-
-##tentativo 4----
-
+all_posts1 <- unlist(all_posts[1])
+str_extract_all(all_posts1, pattern = "^https://beppegrillo\\.it/")
