@@ -1,7 +1,6 @@
 ---
 title: "CE2_Martinoli_Travaglini"
 author: "Francesca Martinoli, Simone Travaglini"
-date: "2022-12-03"
 output: html_document
 ---
 
@@ -9,14 +8,106 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Task 1
-## Task 2
-## Task 3
-## Task 4
+## Task 1: inspect the *robots.txt*
+
+Inspecting the **robots.txt** page for the blog [beppegrillo.it](https://beppegrillo.it/), we can see that it returns a 404 error (which means that the page it's "not found"), because **beppegrillo.it** does not have a robots.txt page. In such situation we can proceed with the scraping using a politely method, which includes:
+
+-   Be identifiable with ***User-Agent*** and ***From*** header fields
+
+-   Scrape as few as possible
+
+-   Do not bombard the server
+
+## Task 2: download the page in a politely way
+
+```{r, eval = F}
+library(RCurl)
+url <- "https://beppegrillo.it/un-mare-di-plastica-ci-sommergera/"
+resp <- RCurl::getURL(url = url, httpheader = c(from = "my@email.com", 'User-Agent' = R.Version()$version.string))
+
+```
+
+There are many ways to get and download pages from the web using R. We used the function [*getURL*]{.underline} from the package [**RCurl**]{.underline}. First of all, we create an object called ***url*** which contains the link to the page ["un mare di plastica ci sommergerà"](https://beppegrillo.it/un-mare-di-plastica-ci-sommergera/) from **beppegrillo.it**. Then we used this object into the function ***getURL***, in which we added an header which contains our email and our 'User-Agent' in order to making a politely request. We stored the response at this request into an object called ***resp***.
+
+## Task 3: get all the HTML links and keep only those which re-direct to other post of blog
+
+First, we got all the links from the page (stored into ***resp***) using the function [*getHTMLLinks*]{.underline} from the package [**XML**]{.underline}. 
+
+```{r, eval = F}
+library(XML)
+links <- XML::getHTMLLinks(resp, externalOnly = T)
+```
+We stored the links into an object called ***links***, then we transformed it into a data frame (called ***data***), using the function [**tibble**]{.underline}. 
+
+```{r, eval = F}
+data <- tibble(links)
+```
+Then, we need to keep only those links that re-direct to other posts of the **beppegrillo.it** blog. In order to do this, we used a regular expression into the function **stringr::str_extract_all** that match only the links we need: this regex allows us to match only the links of other post and not e.g. the links for the sections of the blog. 
+
+```{r, eval = F}
+library(stringr)
+link_grillo <- str_extract_all(
+  links_unl, pattern = "^https://beppegrillo\\.it/[^category].+")
+
+link_grillo <- unlist(link_grillo)
+link_grillo2 <- as.data.frame(link_grillo)
+
+```
+The regular expression used for extract the links is **^https://beppegrillo\\.it/[^category].+**.
+
+We stored the result into an object called ***link_grillo*** and then we transofmed it into a data frame using the function [*as.data.frame*]{.underline}.
+
+
+## Task 4: scrape all the posts for 2016
+
+First of all we create a new function [*download_politely*]{.underline} that allows us to get and download pages in a politely way.
+
+```{r, eval = F}
+download_politely <- function(from_url, to_html, my_email, my_agent = R.Version()$version.string) {
+  
+  require(httr)
+  
+  # Check that arguments are inputted as expected:
+  stopifnot(is.character(from_url))
+  stopifnot(is.character(to_html))
+  stopifnot(is.character(my_email))
+  
+  # GET politely
+  grillo_16 <- httr::GET(url = from_url, 
+                         add_headers(
+                           From = my_email, 
+                           `User-Agent` = R.Version()$version.string
+                         )
+  )
+  # If status == 200, extract content and save to a file:
+  if (httr::http_status(grillo_16)$message == "Success: (200) OK") {
+    bin <- content(grillo_16, as = "raw")
+    writeBin(object = bin, con = to_html)
+  } else {
+    cat("Houston, we have a problem!")
+  }
+}
+```
+Then we crated a vector with the links of the 47 pages of the archive for 2016, and we used it into a for loop to download all the links into a folder called ***grillo_linkpages***, using the function [*download_politely]{.underline}.
+
+```{r, eval = F}
+link <- str_c("https://beppegrillo.it/category/archivio/2016/page/", 1:47)
+
+dir.create("grillo_linkpages")
+
+for (i in seq_along(link)) {
+  cat(i, " ")
+  
+  download_politely(from_url = link[i], 
+                    to_html = here::here("grillo_linkpages", str_c("page_",i,".html")), 
+                    my_email = "francescamartinoli@yahoo.com")
+  
+  Sys.sleep(0.5)
+}
+
+```
+In order to get and download the 47 pages we set **Sys.sleep(0.5)**. 
+
+
+
 ## Task 5
-
-
-
-
-
-
