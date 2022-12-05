@@ -137,12 +137,50 @@ all_link <- unlist(all_link)
 
 all_link
 ```
-to match only the links we need, we set a regular expression into the function **stringr::str_extract_all**: the regular expression was "https://beppegrillo\\.it/[^category][^jpg].+"
+to match only the links we need, we set a regular expression into the function **stringr::str_extract_all**: the regular expression was ***"https://beppegrillo\\.it/[^category][^jpg].+"***
+At last, we used the function unlist on **post2016** and create a list called post_2016_lst which contain the links of all the posts of 2016.
 ```{r, eval = F}
 post2016 <- str_extract_all(all_link, pattern = "https://beppegrillo\\.it/[^category][^jpg].+")
 post2016 <- unlist(post2016)
 post2016 <- tibble(post2016)
 post2016 <- distinct(post2016)
 ```
+```{r}
+post_2016_lst <- unlist(post2016)
+dir.create("link_post2016")
+
+for (i in seq_along(post_2016_lst)) {
+  cat(i, " ")
+  
+  download_politely(from_url = post_2016_lst[i], 
+                    to_html = here::here("link_post2016", str_c("post_",i,".html")), 
+                    my_email = "francescamartinoli@yahoo.com")
+  
+  Sys.sleep(0.5)
+}
+```
+
+the last part of the task 4 was select the main text from all the links. in order to do it, we use the the selector gadget. At the end, we used the function distinct to remove all the duplication.
+```{r, eval=F}
+library(rvest)
+library(stringr)
+
+text_scrape <- list.files(here::here("link_post2016"), full.names = TRUE)
+
+
+text_post = lapply(text_scrape, function(x) {
+  read = read_html(x) %>% 
+    html_elements(css = "p") %>% 
+    html_text(trim = TRUE)
+})
+
+print(text_post[[1]])
+
+text_post_unl <- unlist(text_post)
+text_post_t <- tibble(text_post_unl)
+text_post_t <- distinct(text_post_t) #ripulito
+
+```
 
 ## Task 5
+
