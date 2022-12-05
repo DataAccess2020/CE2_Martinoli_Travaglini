@@ -47,61 +47,58 @@ for (i in seq_along(link)) {
                     to_html = here::here("grillo_linkpages", str_c("page_",i,".html")), 
                     my_email = "francescamartinoli@yahoo.com")
   
-  Sys.sleep(1)
+  Sys.sleep(0.5)
 }
 
 #download the posts of every pages-----
 
 to_scrape <- list.files(here::here("grillo_linkpages"), full.names = TRUE)   # get the list of pages 
-all_posts <- vector(mode = "list", length = length(to_scrape))    # empty container where to place the posts
+all_title <- vector(mode = "list", length = length(to_scrape))    # empty container where to place the posts
 
 # Loop over the pages of each season and scrape the titles
-for (i in seq_along(all_posts)){
-  all_posts[[i]] <- read_html(to_scrape[i]) %>% 
+for (i in seq_along(all_title)){
+  all_title[[i]] <- read_html(to_scrape[i]) %>% 
     html_elements(css = ".td_module_10 .td-module-title") %>% 
     html_text(trim = TRUE)
 }
 
 #così abbiamo preso solo i titoli e non i link !!!!
-str(all_posts)
-all_posts[[1]]    # posts from page 1
+str(all_title)
+all_title[[1]]    # posts from page 1
 
-##### tentaivo 1: questo tentativo non funziona ###### -----
-#dir.create("grillo_linkpost")
 
-#post <- unlist(all_posts)
-#
-#for (i in seq_along(post)) {
-#  cat(i, " ")
-#  
-#  download_politely(from_url = post[i], 
-#                    to_html = here::here("grillo_linkpost", str_c("page_",i,".html")), 
-#                    my_email = "francescamartinoli@yahoo.com")
-#  
-#  Sys.sleep(1)
-#}
-#
-#
+#get the links -----
+all_link <- vector(mode = "list", length = length(to_scrape))    # empty container where to place the posts
 
-#tentativo 2 -----
-to_scrape <- list.files(here::here("grillo_linkpages"), full.names = TRUE)   # get the list of pages 
-all_posts <- vector(mode = "list", length = length(to_scrape))    # empty container where to place the posts
-
-##extract all the links----
-
-for (i in seq_along(all_posts)){
-  all_posts[[i]] <- XML::getHTMLLinks(to_scrape[i], externalOnly = T)
+for (i in seq_along(all_link)){
+  all_link[[i]] <- XML::getHTMLLinks(to_scrape[i], externalOnly = T)
 }
-all_posts <- unlist(all_posts)
+all_link <- unlist(all_link)
 
-all_posts
-prova1 <- str_extract_all(all_posts, pattern = "https://beppegrillo\\.it/.+")
+all_link
 
-prova1 <- unlist(prova1)
 ## provando a pulire i link
-prova2 <- str_extract_all(prova1, pattern = "https://beppegrillo\\.it/[^category][^jpg].+")
-prova2 <- unlist(prova2)
+post2016 <- str_extract_all(all_link, pattern = "https://beppegrillo\\.it/[^category][^jpg].+")
+post2016 <- unlist(post2016)
+post2016 <- tibble(post2016)
+post2016 <- distinct(post2016)
 
-prova2 <- distinct(prova2)
-prova2 <- tibble(prova2)
+#363 links
+
+#download the links for the posts of 2016-----
+post_2016_lst <- unlist(post2016)
+dir.create("link_post2016")
+
+for (i in seq_along(post_2016_lst)) {
+  cat(i, " ")
+  
+  download_politely(from_url = post_2016_lst[i], 
+                    to_html = here::here("link_post2016", str_c("post_",i,".html")), 
+                    my_email = "francescamartinoli@yahoo.com")
+  
+  Sys.sleep(0.5)
+}
+
+
+
 
