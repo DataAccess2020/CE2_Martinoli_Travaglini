@@ -145,7 +145,7 @@ post2016 <- unlist(post2016)
 post2016 <- tibble(post2016)
 post2016 <- distinct(post2016)
 ```
-```{r}
+```{r, eval = F}
 post_2016_lst <- unlist(post2016)
 dir.create("link_post2016")
 
@@ -183,4 +183,7 @@ text_post_t <- distinct(text_post_t) #ripulito
 ```
 
 ## Task 5
+**Check out the RCrawler package and its accompanying paper. What does it mean to “crawl”? and what is it a “web spider”?**
 
+In data science, to crawl means to collect useful information automatically, using specific programmes. in order to do it, crawler collect web URL from a starting point.
+web spider is a bot that is programmed to collect automatically web pages by following hyperlinks.

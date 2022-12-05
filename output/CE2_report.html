@@ -448,7 +448,101 @@ pages in a politely way.</p>
 <p>Then we crated a vector with the links of the 47 pages of the archive
 for 2016, and we used it into a for loop to download all the links into
 a folder called <strong><em>grillo_linkpages</em></strong>, using the
-function <u>*download_politely</u>. ## Task 5</p>
+function <u>*download_politely</u>.Within link we set the url “<a href="https://beppegrillo.it/category/archivio/2016/page/" class="uri">https://beppegrillo.it/category/archivio/2016/page/</a>” and
+set 1:47, which is the total number of pages in the 2016 archive.</p>
+<pre class="r"><code>link &lt;- str_c(&quot;https://beppegrillo.it/category/archivio/2016/page/&quot;, 1:47)
+
+dir.create(&quot;grillo_linkpages&quot;)
+
+for (i in seq_along(link)) {
+  cat(i, &quot; &quot;)
+  
+  download_politely(from_url = link[i], 
+                    to_html = here::here(&quot;grillo_linkpages&quot;, str_c(&quot;page_&quot;,i,&quot;.html&quot;)), 
+                    my_email = &quot;francescamartinoli@yahoo.com&quot;)
+  
+  Sys.sleep(0.5)
+}</code></pre>
+<p>In order to get and download the 47 pages we set
+<strong>Sys.sleep(0.5)</strong>.</p>
+<p>The next step require us to select the main text from every page. To
+do this, we had to create a list with all the links to scrape, which we
+called to_scrape, and an empty vector that works as a container for all
+article links, called all_title.</p>
+<pre class="r"><code>to_scrape &lt;- list.files(here::here(&quot;grillo_linkpages&quot;), full.names = TRUE)    
+all_title &lt;- vector(mode = &quot;list&quot;, length = length(to_scrape))</code></pre>
+<p>after that, we create a loop in order to select all the title from
+the all pages conteined in the list “to_scrape”. we used the selector
+gadget, but we realised that this was not the right method. with the
+selector gadget we could in fact only select the article titles on each
+page, but not the title links. so we need to find another way to do
+it.</p>
+<pre class="r"><code>for (i in seq_along(all_title)){
+  all_title[[i]] &lt;- read_html(to_scrape[i]) %&gt;% 
+    html_elements(css = &quot;.td_module_10 .td-module-title&quot;) %&gt;% 
+    html_text(trim = TRUE)
+}</code></pre>
+<p>in order to get the links, we tryied to use the GetHTMLLinks function
+from XML. so again, we create an empty vector called all_link and set a
+loop to extract links from all the pages of the 2016 archive. finally we
+get a list with all the links for every page of the archive and then we
+used the function unlist.</p>
+<pre class="r"><code>all_link &lt;- vector(mode = &quot;list&quot;, length = length(to_scrape))    # empty container where to place the posts
+
+for (i in seq_along(all_link)){
+  all_link[[i]] &lt;- XML::getHTMLLinks(to_scrape[i], externalOnly = T)
+}
+all_link &lt;- unlist(all_link)
+
+all_link</code></pre>
+<p>to match only the links we need, we set a regular expression into the
+function <strong>stringr::str_extract_all</strong>: the regular
+expression was <strong><em>“<a href="https://beppegrillo\\.it/" class="uri">https://beppegrillo\\.it/</a>[^category][^jpg].+”</em></strong>
+At last, we used the function unlist on <strong>post2016</strong> and
+create a list called post_2016_lst which contain the links of all the
+posts of 2016.</p>
+<pre class="r"><code>post2016 &lt;- str_extract_all(all_link, pattern = &quot;https://beppegrillo\\.it/[^category][^jpg].+&quot;)
+post2016 &lt;- unlist(post2016)
+post2016 &lt;- tibble(post2016)
+post2016 &lt;- distinct(post2016)</code></pre>
+<pre class="r"><code>post_2016_lst &lt;- unlist(post2016)
+dir.create(&quot;link_post2016&quot;)
+
+for (i in seq_along(post_2016_lst)) {
+  cat(i, &quot; &quot;)
+  
+  download_politely(from_url = post_2016_lst[i], 
+                    to_html = here::here(&quot;link_post2016&quot;, str_c(&quot;post_&quot;,i,&quot;.html&quot;)), 
+                    my_email = &quot;francescamartinoli@yahoo.com&quot;)
+  
+  Sys.sleep(0.5)
+}</code></pre>
+<p>the last part of the task 4 was select the main text from all the
+links. in order to do it, we use the the selector gadget. At the end, we
+used the function distinct to remove all the duplication.</p>
+<pre class="r"><code>library(rvest)
+library(stringr)
+
+text_scrape &lt;- list.files(here::here(&quot;link_post2016&quot;), full.names = TRUE)
+
+
+text_post = lapply(text_scrape, function(x) {
+  read = read_html(x) %&gt;% 
+    html_elements(css = &quot;p&quot;) %&gt;% 
+    html_text(trim = TRUE)
+})
+
+print(text_post[[1]])
+
+text_post_unl &lt;- unlist(text_post)
+text_post_t &lt;- tibble(text_post_unl)
+text_post_t &lt;- distinct(text_post_t) #ripulito</code></pre>
+</div>
+<div id="task-5" class="section level2">
+<h2>Task 5</h2>
+<p><strong>Check out the RCrawler package and its accompanying paper.
+What does it mean to “crawl”? and what is it a “web
+spider”?</strong></p>
 </div>
 
 
