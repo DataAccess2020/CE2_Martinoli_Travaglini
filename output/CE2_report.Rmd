@@ -88,7 +88,7 @@ download_politely <- function(from_url, to_html, my_email, my_agent = R.Version(
   }
 }
 ```
-Then we crated a vector with the links of the 47 pages of the archive for 2016, and we used it into a for loop to download all the links into a folder called ***grillo_linkpages***, using the function [*download_politely]{.underline}.
+Then we crated a vector with the links of the 47 pages of the archive for 2016, and we used it into a for loop to download all the links into a folder called ***grillo_linkpages***, using the function [*download_politely]{.underline}.Within link we set the url "https://beppegrillo.it/category/archivio/2016/page/" and set 1:47, which is the total number of pages in the 2016 archive.
 
 ```{r, eval = F}
 link <- str_c("https://beppegrillo.it/category/archivio/2016/page/", 1:47)
@@ -107,6 +107,15 @@ for (i in seq_along(link)) {
 
 ```
 In order to get and download the 47 pages we set **Sys.sleep(0.5)**. 
+
+The next step require us to select the main text from every page. 
+To do this, we had to create a list with all the links to scrape, which we called to_scrape, and an empty vector that works as a container for all article links, called all_title. 
+
+```{r, eval = F}
+to_scrape <- list.files(here::here("grillo_linkpages"), full.names = TRUE)    
+all_title <- vector(mode = "list", length = length(to_scrape))
+```
+
 
 
 
