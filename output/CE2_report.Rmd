@@ -116,7 +116,33 @@ to_scrape <- list.files(here::here("grillo_linkpages"), full.names = TRUE)
 all_title <- vector(mode = "list", length = length(to_scrape))
 ```
 
+after that, we create a loop in order to select all the title from the all pages conteined in the list "to_scrape". we used the selector gadget, but we realised that this was not the right method. with the selector gadget we could in fact only select the article titles on each page, but not the title links. so we need to find another way to do it.
+```{r, eval = F}
+for (i in seq_along(all_title)){
+  all_title[[i]] <- read_html(to_scrape[i]) %>% 
+    html_elements(css = ".td_module_10 .td-module-title") %>% 
+    html_text(trim = TRUE)
+}
 
+```
+in order to get the links, we tryied to use the GetHTMLLinks function from XML. so again, we create an empty vector called all_link and set a loop to extract links from all the pages of the 2016 archive.
+finally we get a list with all the links for every page of the archive and then we used the function unlist. 
+```{r, eval = F}
+all_link <- vector(mode = "list", length = length(to_scrape))    # empty container where to place the posts
 
+for (i in seq_along(all_link)){
+  all_link[[i]] <- XML::getHTMLLinks(to_scrape[i], externalOnly = T)
+}
+all_link <- unlist(all_link)
+
+all_link
+```
+to match only the links we need, we set a regular expression into the function **stringr::str_extract_all**: the regular expression was "https://beppegrillo\\.it/[^category][^jpg].+"
+```{r, eval = F}
+post2016 <- str_extract_all(all_link, pattern = "https://beppegrillo\\.it/[^category][^jpg].+")
+post2016 <- unlist(post2016)
+post2016 <- tibble(post2016)
+post2016 <- distinct(post2016)
+```
 
 ## Task 5
