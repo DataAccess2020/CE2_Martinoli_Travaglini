@@ -104,5 +104,4 @@ prova2 <- unlist(prova2)
 
 prova2 <- distinct(prova2)
 prova2 <- tibble(prova2)
-str_su
 
