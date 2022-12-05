@@ -92,5 +92,17 @@ all_posts <- vector(mode = "list", length = length(to_scrape))    # empty contai
 for (i in seq_along(all_posts)){
   all_posts[[i]] <- XML::getHTMLLinks(to_scrape[i], externalOnly = T)
 }
-all_posts1 <- unlist(all_posts[1])
-str_extract_all(all_posts1, pattern = "^https://beppegrillo\\.it/")
+all_posts <- unlist(all_posts)
+
+all_posts
+prova1 <- str_extract_all(all_posts, pattern = "https://beppegrillo\\.it/.+")
+
+prova1 <- unlist(prova1)
+## provando a pulire i link
+prova2 <- str_extract_all(prova1, pattern = "https://beppegrillo\\.it/[^category][^jpg].+")
+prova2 <- unlist(prova2)
+
+prova2 <- distinct(prova2)
+prova2 <- tibble(prova2)
+str_su
+
