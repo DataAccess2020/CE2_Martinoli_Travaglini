@@ -108,7 +108,7 @@ for (i in seq_along(link)) {
 ```
 In order to get and download the 47 pages we set **Sys.sleep(0.5)**. 
 
-The next step require us to select the main text from every page. 
+The next step require us to download the page for each single linked blog post.
 To do this, we had to create a list with all the links to scrape, which we called to_scrape, and an empty vector that works as a container for all article links, called all_title. 
 
 ```{r, eval = F}
@@ -125,7 +125,7 @@ for (i in seq_along(all_title)){
 }
 
 ```
-in order to get the links, we tryied to use the GetHTMLLinks function from XML. so again, we create an empty vector called all_link and set a loop to extract links from all the pages of the 2016 archive.
+in order to get the links, we tryied to use the GetHTMLLinks function from XML. so again, we create an empty vector called **all_link** and set a loop to extract links from all the pages of the 2016 archive.
 finally we get a list with all the links for every page of the archive and then we used the function unlist. 
 ```{r, eval = F}
 all_link <- vector(mode = "list", length = length(to_scrape))    # empty container where to place the posts
@@ -135,10 +135,9 @@ for (i in seq_along(all_link)){
 }
 all_link <- unlist(all_link)
 
-all_link
 ```
-to match only the links we need, we set a regular expression into the function **stringr::str_extract_all**: the regular expression was ***"https://beppegrillo\\.it/[^category][^jpg].+"***
-At last, we used the function unlist on **post2016** and create a list called post_2016_lst which contain the links of all the posts of 2016.
+To match only the links we need, we set a regular expression into the function **stringr::str_extract_all**: the regular expression was ***"https://beppegrillo\\.it/[^category][^jpg].+"***
+At last, we used the function unlist on **post2016** and create a list called **post_2016_lst** which contain the links of all the posts of 2016. Then, with this list of links, we download all the pages of the posts With the function [*download_politely*]{.underline}. 
 ```{r, eval = F}
 post2016 <- str_extract_all(all_link, pattern = "https://beppegrillo\\.it/[^category][^jpg].+")
 post2016 <- unlist(post2016)
@@ -160,7 +159,7 @@ for (i in seq_along(post_2016_lst)) {
 }
 ```
 
-the last part of the task 4 was select the main text from all the links. in order to do it, we use the the selector gadget. At the end, we used the function distinct to remove all the duplication.
+The last part of the task 4 was select the main text from all the links. In order to do it, we use the the selector gadget. At the end, we used the function distinct to remove all the duplication.
 ```{r, eval=F}
 library(rvest)
 library(stringr)
@@ -178,7 +177,7 @@ print(text_post[[1]])
 
 text_post_unl <- unlist(text_post)
 text_post_t <- tibble(text_post_unl)
-text_post_t <- distinct(text_post_t) #ripulito
+text_post_t <- distinct(text_post_t)
 
 ```
 
