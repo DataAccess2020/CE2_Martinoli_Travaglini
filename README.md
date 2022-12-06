@@ -8,9 +8,9 @@ In the folders you can find:
 
 ## Contributions
 - Number of commits:
-  - Francesca Martinoli: 
-  - Simone Travaglini: 
-- Number of issues opened: 
-- Number of pull requests opened: 
-- Number of pull requests accepted and merged: 
-- Number of new branches opened: 
+  - Francesca Martinoli: 10
+  - Simone Travaglini: 16
+- Number of issues opened: 1
+- Number of pull requests opened: 1
+- Number of pull requests accepted and merged: 1
+- Number of new branches opened: 1
