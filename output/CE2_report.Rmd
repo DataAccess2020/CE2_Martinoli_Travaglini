@@ -186,6 +186,8 @@ text_post_t <- distinct(text_post_t)
 
 In data science, to crawl means to collect useful information automatically, using specific programmes. in order to do it, crawler collect web URL from a starting point.
 web spider is a bot that is programmed to collect automatically web pages by following hyperlinks.
+Crawlers are able to work automatically: they start with a hyperlink and then follow other hyperlink they found, even those that link to external pages. 
+our work was different from crawlers, because we manually collect and provide a specific website to scrape, and then download parts of its pages to collect the information that we are interested in. This is the main difference
 
 To build a ***spider scraper*** we would use the main function of the package, **'Rcrawler()'**, with the following arguments:
 
@@ -195,3 +197,5 @@ To build a ***spider scraper*** we would use the main function of the package, *
 -   **'Obeyrobots = T'**: the crawler will parse the website's robots.txt and respects it
 -   **'Timeout =5'**: the number of seconds to wait for a response until giving up
 -   **'DIR = here::here(path)'**: to define the path where all crawled data will be stored
+
+
