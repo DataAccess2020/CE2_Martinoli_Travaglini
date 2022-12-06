@@ -1,7 +1,7 @@
 # CE2_Martinoli_Travaglini
 Class exercise 2 - Martinoli Francesca and Travaglini Simone
 
-##Structure
+## Structure
 In the folders you can find:
 - Output: it contains the final report in Rmarkdown, with our solutions to the tasks
 - Scripts: it contains our .R scripts
