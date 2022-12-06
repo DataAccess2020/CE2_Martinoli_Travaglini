@@ -465,10 +465,10 @@ for (i in seq_along(link)) {
 }</code></pre>
 <p>In order to get and download the 47 pages we set
 <strong>Sys.sleep(0.5)</strong>.</p>
-<p>The next step require us to select the main text from every page. To
-do this, we had to create a list with all the links to scrape, which we
-called to_scrape, and an empty vector that works as a container for all
-article links, called all_title.</p>
+<p>The next step require us to download the page for each single linked
+blog post. To do this, we had to create a list with all the links to
+scrape, which we called to_scrape, and an empty vector that works as a
+container for all article links, called all_title.</p>
 <pre class="r"><code>to_scrape &lt;- list.files(here::here(&quot;grillo_linkpages&quot;), full.names = TRUE)    
 all_title &lt;- vector(mode = &quot;list&quot;, length = length(to_scrape))</code></pre>
 <p>after that, we create a loop in order to select all the title from
@@ -483,24 +483,24 @@ it.</p>
     html_text(trim = TRUE)
 }</code></pre>
 <p>in order to get the links, we tryied to use the GetHTMLLinks function
-from XML. so again, we create an empty vector called all_link and set a
-loop to extract links from all the pages of the 2016 archive. finally we
-get a list with all the links for every page of the archive and then we
-used the function unlist.</p>
+from XML. so again, we create an empty vector called
+<strong>all_link</strong> and set a loop to extract links from all the
+pages of the 2016 archive. finally we get a list with all the links for
+every page of the archive and then we used the function unlist.</p>
 <pre class="r"><code>all_link &lt;- vector(mode = &quot;list&quot;, length = length(to_scrape))    # empty container where to place the posts
 
 for (i in seq_along(all_link)){
   all_link[[i]] &lt;- XML::getHTMLLinks(to_scrape[i], externalOnly = T)
 }
-all_link &lt;- unlist(all_link)
-
-all_link</code></pre>
-<p>to match only the links we need, we set a regular expression into the
+all_link &lt;- unlist(all_link)</code></pre>
+<p>To match only the links we need, we set a regular expression into the
 function <strong>stringr::str_extract_all</strong>: the regular
 expression was <strong><em>“<a href="https://beppegrillo\\.it/" class="uri">https://beppegrillo\\.it/</a>[^category][^jpg].+”</em></strong>
 At last, we used the function unlist on <strong>post2016</strong> and
-create a list called post_2016_lst which contain the links of all the
-posts of 2016.</p>
+create a list called <strong>post_2016_lst</strong> which contain the
+links of all the posts of 2016. Then, with this list of links, we
+download all the pages of the posts With the function
+<u><em>download_politely</em></u>.</p>
 <pre class="r"><code>post2016 &lt;- str_extract_all(all_link, pattern = &quot;https://beppegrillo\\.it/[^category][^jpg].+&quot;)
 post2016 &lt;- unlist(post2016)
 post2016 &lt;- tibble(post2016)
@@ -517,8 +517,8 @@ for (i in seq_along(post_2016_lst)) {
   
   Sys.sleep(0.5)
 }</code></pre>
-<p>the last part of the task 4 was select the main text from all the
-links. in order to do it, we use the the selector gadget. At the end, we
+<p>The last part of the task 4 was select the main text from all the
+links. In order to do it, we use the the selector gadget. At the end, we
 used the function distinct to remove all the duplication.</p>
 <pre class="r"><code>library(rvest)
 library(stringr)
@@ -536,7 +536,7 @@ print(text_post[[1]])
 
 text_post_unl &lt;- unlist(text_post)
 text_post_t &lt;- tibble(text_post_unl)
-text_post_t &lt;- distinct(text_post_t) #ripulito</code></pre>
+text_post_t &lt;- distinct(text_post_t)</code></pre>
 </div>
 <div id="task-5" class="section level2">
 <h2>Task 5</h2>
@@ -548,6 +548,24 @@ automatically, using specific programmes. in order to do it, crawler
 collect web URL from a starting point. web spider is a bot that is
 programmed to collect automatically web pages by following
 hyperlinks.</p>
+<p>To build a <strong><em>spider scraper</em></strong> we would use the
+main function of the package, <strong>‘Rcrawler()’</strong>, with the
+following arguments:</p>
+<ul>
+<li><strong>website = “<a href="https://beppegrillo.it" class="uri">https://beppegrillo.it</a>”</strong>: it contains the root
+URL of the website to crawl and scrape</li>
+<li><strong>‘RequestDelay = 1’</strong>: the time interval between each
+round of parallel http requests, for not overload the target (similar to
+Sys.sleep())</li>
+<li><strong>‘User-Agent’= R.Version()$version.string’</strong>: to give
+information about us</li>
+<li><strong>‘Obeyrobots = T’</strong>: the crawler will parse the
+website’s robots.txt and respects it</li>
+<li><strong>‘Timeout =5’</strong>: the number of seconds to wait for a
+response until giving up</li>
+<li><strong>‘DIR = here::here(path)’</strong>: to define the path where
+all crawled data will be stored</li>
+</ul>
 </div>
 
 
